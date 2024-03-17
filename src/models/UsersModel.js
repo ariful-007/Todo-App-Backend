@@ -1,13 +1,19 @@
 const mongoose = require('mongoose');
-const userSchema = new mongoose.Schema( 
-  // exemple bitore gula start
+
+
+
+const userSchema = new mongoose.Schema(
+  // exemple create start
   {
-    userName:{type: 'string', required: true},
-    password:{type:'string', required: true},
-    email:{type: 'string', required: true, unique: true},
+    email: { type: 'string', unique: true },
+    firstName: { type: 'string' },
+    lastName: { type: 'string' },
+    password: { type: 'string' },
+    profilePicture: { type: 'string' },
+    createdDate: { type:'date', default: Date.now },
   },
-  {versionKey: false}
-  // exemple bitore gula end
+  { versionKey: false }
+  // exemple create end
 )
 
 const userModel = mongoose.model('users', userSchema)
