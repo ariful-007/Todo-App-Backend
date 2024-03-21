@@ -6,7 +6,7 @@ const todoSchema = new mongoose.Schema(
     description: {type: String},
     status: {type: String},
     email: {type: String},
-    createDate: {type: Date, default: Date.new}
+    createdDate: {type: Date, default: Date.new}
   },
   {versionKey: false}
 )
