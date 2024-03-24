@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema(
     lastName: { type: 'string' },
     password: { type: 'string' },
     profilePicture: { type: 'string' },
-    createdDate: { type:'date', default: Date.now },
+    createdDate: { type:'date', default: Date.now() },
   },
   { versionKey: false }
   // exemple create end

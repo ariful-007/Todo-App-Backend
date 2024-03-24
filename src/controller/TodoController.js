@@ -18,9 +18,10 @@ exports.CreateTodo = async (req,res) => {
 exports.UpdateTodo = async (req , res) =>{
   try{
     const id = req.params.id;
+    const title = req.params.title;
     const status = req.params.status;
     const query = {_id: id};
-    const todo = await TodoModel.updateOne(query, {status: status});
+    const todo = await TodoModel.updateOne(query, {status: status, title: title});
     res.status(200).json({status:'success', data: todo});
   }
   catch(error) {
@@ -49,11 +50,11 @@ exports.TodoListByStatus = async (req, res) => {
     const email = req.headers.email;
     const result = await TodoModel.aggregate(
       [
-        {$match:{status:status,email:email}},
-        {$project:{_id:1, title:1, description:1, status:1, createdDate:{$dateToString:{format:"%d-%m-%y", date:$createdDate}}}}
+        {$match: {status: status, email: email}},
+        {$project:{ _id:1, title:1, status:1, description:1, createdDate:{$dateToString:{format:"%Y-%m-%d", date:"$createdDate"}}}}
       ]
     )
-    res.status(200).json({status:'success', data: todo});
+    res.status(200).json({status:'success', data: result});
   }
   catch(error) {
     res.status(200).json({status: 'fail', data: error});
