@@ -14,7 +14,7 @@ exports.Registraion = async (req, res) =>{
     res.status(200).json({status:'success', data:user})
   }
   catch(error){
-    res.status(400).json({status: 'Failed', message:error.message})
+    res.status(400).json({status: 'Failed', data:error.message})
   }
 }
 // cerate a registraion  end
@@ -25,10 +25,10 @@ exports.Login = async (req, res) =>{
     const reqBody = req.body
     const user = await userModel.findOne({email:reqBody.email})
     if(!user){
-      return res.status(400).json({status:'fail', message:"User not found"})
+      return res.status(400).json({status:'fail', data:"User not found"})
     }
     if(user.password !== reqBody.password){
-      res.status(400).json({status: 'Failed', message:'wrong password'})
+      res.status(400).json({status: 'Failed', data:'wrong password'})
     }
     else{
       let payload = {
@@ -43,7 +43,7 @@ exports.Login = async (req, res) =>{
     
   }
   catch(error){
-    res.status(400).json({status: 'Failed', message:error.message})
+    res.status(400).json({status: 'Failed', data:error.message})
   }
 }
 // cerate a login end
@@ -58,13 +58,12 @@ exports.UpdateProfile = async (req, res) =>{
     res.status(200).json({status:'success', data: user})
   }
   catch(error){
-    res.status(400).json({status: 'Failed', message:error.message})
+    res.status(400).json({status: 'Failed', data:error.message})
   }
 }
 // update profile end
 
 // profile details start
-
 exports.ProfileDetails = async (req, res) =>{
   try{
     let email = req.headers.email;
@@ -79,7 +78,6 @@ exports.ProfileDetails = async (req, res) =>{
 // profile details end
 
 // emailverificatin start
-
 exports.EmailVerification = async (req, res) =>{
   try{
     let email = req.params.email;
@@ -87,11 +85,11 @@ exports.EmailVerification = async (req, res) =>{
     let otp = Math.floor(10000 + Math.random() * 900000)
     const user = await userModel.findOne(query);
     if(!user){
-      return res.status(200).json({status:'fail', message:"User not found"})
+      return res.status(200).json({status:'fail', data:"User not found"})
     }else{
       const createOpt = await OtpModel.create({email: email, otp:otp,})
       const sendEmail = SendEmailUitility(email, 'To-do-taskar password verification',`You OTP Is ${otp}`)
-      res.status(200).json({status: 'succss', message:'OTP Send Successfully'})
+      res.status(200).json({status: 'succss', data:'OTP Send Successfully'})
     }
   }
   catch(error){
@@ -99,3 +97,54 @@ exports.EmailVerification = async (req, res) =>{
   }
 }
 // emailverificatin end
+// otp verifiy start
+
+exports.OtpVerifiy = async (req, res) =>{
+  try{
+    let email = req.params.email;
+    let otp = req.params.otp;
+    let status = 0;
+    let upDateStatus = 1;
+    let otpCheck = await OtpModel.aggregate([
+      {$match:{email:email, otp:otp}},
+      {$count:"total"},
+    ]);
+    if(otpCheck.length>0){
+      let updateOtp = await OtpModel.updateOne({email:email, otp:otp, status:status},{email:email, otp:otp, status:upDateStatus});
+      res.status(200).json({status:'success', data:"OTP Verifiy Successfully"})
+    }
+    else{
+      res.status(200).json({status: 'Failed', data:"OTP Invalid"})
+    }
+  }
+  catch(error){
+    res.status(200).json({status: 'Failed', data:error})
+  }
+}
+// otp verifiy end
+
+// reset password start
+
+exports.ResetPassword = async (req, res) =>{
+  try{
+    let email = req.body.email;
+    let otp = req.body.otp;
+    let uadatePassword = req.body.password;
+    let upDateStatus = 1;
+    let otpCheck = await OtpModel.aggregate([
+      {$match:{email:email, otp:otp,status:upDateStatus}},
+      {$count:"total"},
+    ]);
+    if(otpCheck.length>0){
+      let passwordUpdate = await userModel.updateOne({email:email},{ password:uadatePassword});
+      res.status(200).json({status:'success', data:"Password Reset Successfully"})
+    }
+    else{
+      res.status(200).json({status: 'Failed', data:"OTP Invalid"})
+    }
+  }
+  catch(error){
+    res.status(200).json({status: 'Failed', data:error})
+  }
+}
+// reset password end
