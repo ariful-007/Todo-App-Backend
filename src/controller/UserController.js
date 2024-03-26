@@ -1,9 +1,7 @@
-
 const OtpModel = require('../models/OtpModel');
 const userModel = require('../models/UsersModel')
 const jwt = require('jsonwebtoken');
 const SendEmailUitility = require('../uitility/SendEmailUitility');
-const { response } = require('express');
 
 
 // cerate a registraion start
@@ -54,6 +52,7 @@ exports.UpdateProfile = async (req, res) =>{
     let email = req.headers.email;
     let reqBody = req.body;
     let query = {email: email};
+
     const user = await userModel.updateOne(query, reqBody);
     res.status(200).json({status:'success', data: user})
   }
@@ -98,20 +97,18 @@ exports.EmailVerification = async (req, res) =>{
 }
 // emailverificatin end
 // otp verifiy start
-
-exports.OtpVerifiy = async (req, res) =>{
+exports.OtpVerifiy = async (req,res) =>{
   try{
     let email = req.params.email;
     let otp = req.params.otp;
     let status = 0;
-    let upDateStatus = 1;
+    let updateStatus = 1;
     let otpCheck = await OtpModel.aggregate([
-      {$match:{email:email, otp:otp}},
+      {$match:{email:email, otp:otp,}},
       {$count:"total"},
     ]);
     if(otpCheck.length>0){
-      let updateOtp = await OtpModel.updateOne({email:email, otp:otp, status:status},{email:email, otp:otp, status:upDateStatus});
-      res.status(200).json({status:'success', data:"OTP Verifiy Successfully"})
+      res.status(200).json({status:'success', data:"OTP Verified Successfully"})
     }
     else{
       res.status(200).json({status: 'Failed', data:"OTP Invalid"})
@@ -124,19 +121,18 @@ exports.OtpVerifiy = async (req, res) =>{
 // otp verifiy end
 
 // reset password start
-
 exports.ResetPassword = async (req, res) =>{
   try{
     let email = req.body.email;
     let otp = req.body.otp;
-    let uadatePassword = req.body.password;
-    let upDateStatus = 1;
+    let updatePassword = req.body.password;
+    let updateStatus = 1;
     let otpCheck = await OtpModel.aggregate([
-      {$match:{email:email, otp:otp,status:upDateStatus}},
+      {$match:{email:email, otp:otp, status:updateStatus}},
       {$count:"total"},
     ]);
     if(otpCheck.length>0){
-      let passwordUpdate = await userModel.updateOne({email:email},{ password:uadatePassword});
+      let passwordUpdate = await userModel.updateOne({email:email},{ password:updatePassword});
       res.status(200).json({status:'success', data:"Password Reset Successfully"})
     }
     else{
