@@ -7,12 +7,12 @@ const SendEmailUitility = require('../uitility/SendEmailUitility');
 // cerate a registraion start
 exports.Registraion = async (req, res) =>{
   try{
-    const data = req.body
-    const user = await userModel.create(data)
+    const reqBody = req.body
+    const user = await userModel.create(reqBody)
     res.status(200).json({status:'success', data:user})
   }
   catch(error){
-    res.status(400).json({status: 'Failed', data:error.message})
+    res.status(400).json({status: 'Failed', data:error.message}) 
   }
 }
 // cerate a registraion  end
@@ -23,10 +23,10 @@ exports.Login = async (req, res) =>{
     const reqBody = req.body
     const user = await userModel.findOne({email:reqBody.email})
     if(!user){
-      return res.status(400).json({status:'fail', data:"User not found"})
+      return res.status(400).json({status:'fail', data:"User Not Found"})
     }
     if(user.password !== reqBody.password){
-      res.status(400).json({status: 'Failed', data:'wrong password'})
+      res.status(400).json({status: 'Failed', data:'Wrong password'})
     }
     else{
       let payload = {
@@ -87,7 +87,7 @@ exports.EmailVerification = async (req, res) =>{
       return res.status(200).json({status:'fail', data:"User not found"})
     }else{
       const createOpt = await OtpModel.create({email: email, otp:otp,})
-      const sendEmail = SendEmailUitility(email, 'To-do-taskar password verification',`You OTP Is ${otp}`)
+      const sendEmail = SendEmailUitility(email, 'To-do-taskar password verification',`You OTP IS ${otp}`)
       res.status(200).json({status: 'succss', data:'OTP Send Successfully'})
     }
   }
@@ -96,6 +96,7 @@ exports.EmailVerification = async (req, res) =>{
   }
 }
 // emailverificatin end
+
 // otp verifiy start
 exports.OtpVerifiy = async (req,res) =>{
   try{
@@ -104,20 +105,24 @@ exports.OtpVerifiy = async (req,res) =>{
     let status = 0;
     let updateStatus = 1;
     let otpCheck = await OtpModel.aggregate([
-      {$match:{email:email, otp:otp,}},
+      {$match:{email:email, otp:otp}},
       {$count:"total"},
     ]);
     if(otpCheck.length>0){
+      let updateOtp = await OtpModel.updateOne({email:email, otp:otp, status:status},{email:email, otp:otp,status:updateStatus})
       res.status(200).json({status:'success', data:"OTP Verified Successfully"})
     }
     else{
-      res.status(200).json({status: 'Failed', data:"OTP Invalid"})
+      res.status(200).json({status: 'Failed', data:"Invalid OTP"})
     }
   }
   catch(error){
     res.status(200).json({status: 'Failed', data:error})
   }
 }
+
+
+
 // otp verifiy end
 
 // reset password start
