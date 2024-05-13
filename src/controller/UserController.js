@@ -12,7 +12,7 @@ exports.Registraion = async (req, res) =>{
     res.status(200).json({status:'success', data:user})
   }
   catch(error){
-    res.status(400).json({status: 'Failed', data:error.message}) 
+    res.status(200).json({status: 'Failed', data:error.message}) 
   }
 }
 // cerate a registraion  end
@@ -23,10 +23,10 @@ exports.Login = async (req, res) =>{
     const reqBody = req.body
     const user = await userModel.findOne({email:reqBody.email})
     if(!user){
-      return res.status(400).json({status:'fail', data:"User Not Found"})
+      return res.status(200).json({status:'fail', data:"User Not Found"})
     }
     if(user.password !== reqBody.password){
-      res.status(400).json({status: 'Failed', data:'Wrong password'})
+      res.status(200).json({status: 'Failed', data:'Wrong password'})
     }
     else{
       let payload = {
@@ -41,7 +41,7 @@ exports.Login = async (req, res) =>{
     
   }
   catch(error){
-    res.status(400).json({status: 'Failed', data:error.message})
+    res.status(200).json({status: 'Failed', data:error.message})
   }
 }
 // cerate a login end
@@ -57,7 +57,7 @@ exports.UpdateProfile = async (req, res) =>{
     res.status(200).json({status:'success', data: user})
   }
   catch(error){
-    res.status(400).json({status: 'Failed', data:error.message})
+    res.status(200).json({status: 'Failed', data:error.message})
   }
 }
 // update profile end
@@ -120,9 +120,6 @@ exports.OtpVerifiy = async (req,res) =>{
     res.status(200).json({status: 'Failed', data:error})
   }
 }
-
-
-
 // otp verifiy end
 
 // reset password start
