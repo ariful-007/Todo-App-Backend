@@ -6,7 +6,7 @@ const AuthVerification = require('../middleware/AuthVerification');
 
 // user api rout  start
 router.post('/registraion', userController.Registraion)
-router.get('/login', userController.Login)
+router.post('/login', userController.Login)
 router.post('/user-profile-update', AuthVerification, userController.UpdateProfile)
 router.get('/user-profile-details', AuthVerification, userController.ProfileDetails)
 router.get('/email-verifiy/:email',  userController.EmailVerification)
