@@ -113,7 +113,7 @@ exports.OtpVerifiy = async (req,res) =>{
       res.status(200).json({status:'success', data:"OTP Verified Successfully"})
     }
     else{
-      res.status(200).json({status: 'Failed', data:"Invalid OTP"})
+      res.status(200).json({status:'Failed', data:"Invalid OTP"})
     }
   }
   catch(error){

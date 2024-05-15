@@ -10,7 +10,7 @@ router.post('/login', userController.Login)
 router.post('/user-profile-update', AuthVerification, userController.UpdateProfile)
 router.get('/user-profile-details', AuthVerification, userController.ProfileDetails)
 router.get('/email-verifiy/:email',  userController.EmailVerification)
-router.get('/otp-verifiy/:email/:opt', userController.OtpVerifiy)
+router.get('/otp-verifiy/:email/:otp', userController.OtpVerifiy)
 router.post('/reset-password', userController.ResetPassword)
 
 // user api rout  end
